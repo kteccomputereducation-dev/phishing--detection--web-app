@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Model Info - PhishGuard{% endblock %}
+{% block content %}
+<h1>Model Information</h1>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ (metrics.get('accuracy', 0) * 100) | round(1) }}%</div>
+        <div class="stat-label">Accuracy</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ (metrics.get('precision', 0) * 100) | round(1) }}%</div>
+        <div class="stat-label">Precision</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ (metrics.get('recall', 0) * 100) | round(1) }}%</div>
+        <div class="stat-label">Recall</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ (metrics.get('f1_score', 0) * 100) | round(1) }}%</div>
+        <div class="stat-label">F1 Score</div>
+    </div>
+</div>
+
+<div class="info-block">
+    <h2>Algorithm</h2>
+    <p>Random Forest Classifier (200 estimators, max depth 8) trained on a 24-dimension
+    lexical and host-based feature vector extracted from each URL.</p>
+
+    <h2>Training Data</h2>
+    <p>Trained on {{ metrics.get('train_size', 'N/A') }} samples, evaluated on
+    {{ metrics.get('test_size', 'N/A') }} held-out samples (80/20 split, stratified by class).</p>
+
+    <h2>Feature Categories</h2>
+    <ul>
+        <li>Lexical: URL length, hostname length, dot/hyphen/digit counts, special characters</li>
+        <li>Structural: subdomain count, presence of IP address, '@' symbol, port number</li>
+        <li>Keyword-based: presence of phishing-associated keywords (login, verify, secure, etc.)</li>
+        <li>Domain reputation: suspicious TLDs, link-shortening services</li>
+        <li>Host-based (live): DNS resolution, valid TLS certificate presence</li>
+    </ul>
+</div>
+{% endblock %}

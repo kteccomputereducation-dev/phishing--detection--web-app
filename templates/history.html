@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Scan History - PhishGuard{% endblock %}
+{% block content %}
+<h1>Scan History</h1>
+<table class="file-table">
+    <thead>
+        <tr><th>URL</th><th>Verdict</th><th>Confidence</th><th>Scanned At (UTC)</th></tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <td class="truncate">{{ row.url }}</td>
+            <td><span class="badge {{ 'badge-danger' if row.verdict == 'Phishing' else 'badge-safe' }}">{{ row.verdict }}</span></td>
+            <td>{{ row.confidence }}%</td>
+            <td>{{ row.scanned_at[:19] }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="empty">No scans yet. Analyze a URL to get started.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

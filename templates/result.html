@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Scan Result - PhishGuard{% endblock %}
+{% block content %}
+
+<a href="{{ url_for('index') }}" class="back-link">&larr; Analyze another URL</a>
+
+<div class="verdict-card {{ 'verdict-danger' if result.is_phishing else 'verdict-safe' }}">
+    <div class="verdict-icon">{{ '&#9888;&#65039;' if result.is_phishing else '&#9989;' }}</div>
+    <div>
+        <div class="verdict-label">{{ result.verdict }}</div>
+        <div class="verdict-url">{{ result.url }}</div>
+    </div>
+    <div class="verdict-confidence">{{ result.confidence }}%<span>confidence</span></div>
+</div>
+
+<div class="prob-bars">
+    <div class="prob-row">
+        <span>Phishing probability</span>
+        <div class="prob-bar"><div class="prob-fill prob-danger" style="width: {{ result.phishing_probability }}%;"></div></div>
+        <span>{{ result.phishing_probability }}%</span>
+    </div>
+    <div class="prob-row">
+        <span>Legitimate probability</span>
+        <div class="prob-bar"><div class="prob-fill prob-safe" style="width: {{ result.legit_probability }}%;"></div></div>
+        <span>{{ result.legit_probability }}%</span>
+    </div>
+</div>
+
+<h2>Risk Signals Detected</h2>
+<ul class="reasons-list">
+    {% for reason in result.reasons %}
+    <li>{{ reason }}</li>
+    {% endfor %}
+</ul>
+
+<h2>Extracted Features</h2>
+<table class="file-table">
+    <thead><tr><th>Feature</th><th>Value</th></tr></thead>
+    <tbody>
+        {% for key, value in result.features.items() %}
+        <tr><td>{{ key.replace('_', ' ') | title }}</td><td>{{ value }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

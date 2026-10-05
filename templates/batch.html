@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Batch Scan - PhishGuard{% endblock %}
+{% block content %}
+<h1>Batch URL Scan</h1>
+<p class="subtitle">Upload a CSV or text file with one URL per line to scan many URLs at once.</p>
+
+<form action="{{ url_for('batch') }}" method="post" enctype="multipart/form-data" class="upload-form">
+    <input type="file" name="csv_file" accept=".csv,.txt" required>
+    <button type="submit" class="btn-primary">Upload & Scan</button>
+</form>
+
+{% if results is not none %}
+<div class="stat-grid" style="margin-top:24px;">
+    <div class="stat-card">
+        <div class="stat-value">{{ results | length }}</div>
+        <div class="stat-label">URLs Scanned</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ phishing_count }}</div>
+        <div class="stat-label">Flagged as Phishing</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ legit_count }}</div>
+        <div class="stat-label">Legitimate</div>
+    </div>
+</div>
+
+<table class="file-table" style="margin-top:20px;">
+    <thead><tr><th>URL</th><th>Verdict</th><th>Confidence</th></tr></thead>
+    <tbody>
+        {% for r in results %}
+        <tr>
+            <td class="truncate">{{ r.url }}</td>
+            <td><span class="badge {{ 'badge-danger' if r.is_phishing else 'badge-safe' }}">{{ r.verdict }}</span></td>
+            <td>{{ r.confidence }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

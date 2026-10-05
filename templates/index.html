@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Analyze URL - PhishGuard{% endblock %}
+{% block content %}
+
+<div class="hero">
+    <h1>&#128737; Phishing URL Detector</h1>
+    <p>Paste any URL below to check whether it shows signs of being a phishing attempt.</p>
+</div>
+
+{% if not model_loaded %}
+<div class="flash flash-danger">
+    Model not found. Please run <code>python train_model.py</code> once before using the analyzer.
+</div>
+{% endif %}
+
+<form action="{{ url_for('analyze') }}" method="post" class="analyze-form">
+    <input type="text" name="url" placeholder="e.g. http://secure-login-update-account.tk/verify" required autofocus>
+    <button type="submit" class="btn-primary">Analyze</button>
+</form>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ metrics.get('accuracy', 0) * 100 | round(1) if metrics else 'N/A' }}%</div>
+        <div class="stat-label">Model Accuracy</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ total }}</div>
+        <div class="stat-label">Total URLs Scanned</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ phishing }}</div>
+        <div class="stat-label">Phishing Detected</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ metrics.get('n_features', 24) }}</div>
+        <div class="stat-label">Features Analyzed</div>
+    </div>
+</div>
+
+<div class="info-block">
+    <h2>How it works</h2>
+    <p>PhishGuard extracts 24 lexical and host-based features from a URL (length, use of IP
+    addresses, suspicious keywords, link shorteners, risky TLDs, HTTPS usage, DNS resolution,
+    and more) and feeds them into a trained Random Forest classifier to estimate the
+    probability that the URL is a phishing attempt.</p>
+</div>
+
+{% endblock %}
